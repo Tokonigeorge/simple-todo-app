@@ -90,7 +90,7 @@ const todoSlice = createSlice({
               (c) => c.id !== cardId
             );
             card.status =
-              targetColumn.name === 'Todo'
+              targetColumn.name === 'To Do'
                 ? 'todo'
                 : targetColumn.name === 'In Progress'
                 ? 'in_progress'
@@ -136,6 +136,19 @@ const todoSlice = createSlice({
         }
       }
     },
+    updateProject: (
+      state,
+      action: PayloadAction<{ projectId: string; status: string }>
+    ) => {
+      const project = state.selectedProject;
+      if (project && project.id === action.payload.projectId) {
+        project.status = action.payload.status as
+          | 'active'
+          | 'completed'
+          | 'archived';
+        updateTeamData(state);
+      }
+    },
   },
 });
 
@@ -147,5 +160,6 @@ export const {
   moveCard,
   deleteCard,
   updateCard,
+  updateProject,
 } = todoSlice.actions;
 export default todoSlice.reducer;

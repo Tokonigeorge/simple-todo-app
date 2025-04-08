@@ -37,7 +37,7 @@ const CardForm = ({
     assignee: existingCard?.assignee || undefined,
     priority: existingCard?.priority || 'low',
     status:
-      existingCard?.status || columnName === 'Todo'
+      existingCard?.status || columnName === 'To Do'
         ? 'todo'
         : columnName === 'In Progress'
         ? 'in_progress'

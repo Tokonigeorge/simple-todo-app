@@ -57,7 +57,7 @@ const Columns = ({
       updateCard(column.id, card);
     } else {
       card.status =
-        column.name === 'Todo'
+        column.name === 'To Do'
           ? 'todo'
           : column.name === 'In Progress'
           ? 'in_progress'

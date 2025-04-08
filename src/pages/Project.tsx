@@ -1,11 +1,11 @@
 import { useNavigate, useParams } from 'react-router-dom';
 import { useAppSelector } from '../store/hook';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { ArrowLeft } from 'lucide-react';
 import { Team, Project, ICard } from '../types/todo';
 import { deleteCard, addCard, moveCard, updateCard } from '../slice/todoSlice';
 import { useDispatch } from 'react-redux';
-import { v4 as uuidv4 } from 'uuid';
+
 import Board from '../components/KanbanBoard/Board';
 
 const ProjectPage = () => {
@@ -42,17 +42,26 @@ const ProjectPage = () => {
     dispatch(moveCard({ cardId, sourceColumnId, targetColumnId }));
   };
 
-  const handleDeleteCard = (cardId: string, columnId: string) => {
-    dispatch(deleteCard({ cardId, columnId }));
-  };
+  const handleDeleteCard = useCallback(
+    (cardId: string, columnId: string) => {
+      dispatch(deleteCard({ cardId, columnId }));
+    },
+    [dispatch]
+  );
 
-  const handleAddCard = (columnId: string, card: ICard) => {
-    dispatch(addCard({ columnId, card }));
-  };
+  const handleAddCard = useCallback(
+    (columnId: string, card: ICard) => {
+      dispatch(addCard({ columnId, card }));
+    },
+    [dispatch]
+  );
 
-  const handleUpdateCard = (columnId: string, card: ICard) => {
-    dispatch(updateCard({ columnId, card }));
-  };
+  const handleUpdateCard = useCallback(
+    (columnId: string, card: ICard) => {
+      dispatch(updateCard({ columnId, card }));
+    },
+    [dispatch]
+  );
 
   if (!team) {
     return <div>Team not found</div>;

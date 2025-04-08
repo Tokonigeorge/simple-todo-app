@@ -1,7 +1,7 @@
+import React from 'react';
 import { ICard } from '../../types/todo';
 import { useDrag, useDrop } from 'react-dnd';
 import { ItemTypes } from '../../types/dndTypes';
-import { moveCard } from '../../slice/todoSlice';
 import { useRef, useState } from 'react';
 import { Calendar, Edit, Flag, Trash2, User } from 'lucide-react';
 import Modal from '../Modal';
@@ -78,9 +78,6 @@ const Card = ({
   return (
     <div
       ref={ref}
-      onClick={() => {
-        console.log(card);
-      }}
       className={`p-4 rounded-md bg-white shadow-md hover:bg-gray-100 transition-colors cursor-pointer ${
         isDragging ? 'opacity-50' : 'opacity-100'
       }`}

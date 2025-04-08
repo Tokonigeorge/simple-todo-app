@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import React, { FC } from 'react';
 import { Team } from '../types/todo';
 
 interface FilterComponentProps {
@@ -45,7 +45,7 @@ const FilterComponent: FC<FilterComponentProps> = ({
           className='border border-gray-300 rounded-md p-2'
         >
           <option value='all'>All</option>
-          {team.members.map((member) => (
+          {team.members?.map((member) => (
             <option value={member.id}>{member.name}</option>
           ))}
         </select>

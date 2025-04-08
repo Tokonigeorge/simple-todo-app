@@ -1,3 +1,4 @@
+import React from 'react';
 import { useParams } from 'react-router-dom';
 import { useAppSelector } from '../store/hook';
 import { useEffect, useState } from 'react';
@@ -82,9 +83,9 @@ const TeamPage = () => {
           <p className='text-sm text-gray-500'>{team.description}</p>
           <div className='flex flex-col gap-2'>
             <p className='text-sm text-gray-500 border-b border-gray-200 pb-2'>
-              Team Members: {team.members.length}
+              Team Members: {team.members?.length || 0}
             </p>
-            {team.members.map((member) => (
+            {team.members?.map((member) => (
               <div key={member.id}>
                 <p className='text-sm text-gray-500'>{member.name}</p>
                 <p className='text-sm text-gray-500'>

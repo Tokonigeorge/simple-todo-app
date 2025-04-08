@@ -12,13 +12,11 @@ export interface Project {
   name: string;
   description: string;
   status: 'active' | 'completed' | 'archived';
-  board: Board[];
+  board: Board;
 }
 
 export interface Board {
   id: string;
-  name: string;
-  description: string;
   progress: number;
   columns: Column[];
 }
@@ -26,10 +24,10 @@ export interface Board {
 export interface Column {
   id: string;
   name: string;
-  tasks: Task[];
+  cards: ICard[];
 }
 
-export interface Task {
+export interface ICard {
   id: string;
   name: string;
   description?: string;
@@ -39,6 +37,7 @@ export interface Task {
   priority: 'low' | 'medium' | 'high';
   comments?: Comment[];
   subtasks?: Subtask[];
+  tags?: string[];
 }
 
 export interface Member {

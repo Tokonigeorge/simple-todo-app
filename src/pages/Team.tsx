@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import Team from '../types/todo';
 import Button from '../components/Button';
 import { ArrowLeft } from 'lucide-react';
-import { addProject } from '../slice/todoSlice';
+import { addProject, setSelectedProject } from '../slice/todoSlice';
 import { v4 as uuidv4 } from 'uuid';
 import { useAppDispatch } from '../store/hook';
 import Modal from '../components/Modal';
@@ -29,7 +29,27 @@ const TeamPage = () => {
         name: projectName,
         description: projectDescription,
         status: 'active',
-        board: [],
+        board: {
+          id: uuidv4(),
+          progress: 0,
+          columns: [
+            {
+              id: uuidv4(),
+              name: 'To Do',
+              cards: [],
+            },
+            {
+              id: uuidv4(),
+              name: 'In Progress',
+              cards: [],
+            },
+            {
+              id: uuidv4(),
+              name: 'Done',
+              cards: [],
+            },
+          ],
+        },
       })
     );
     setIsModalOpen(false);
@@ -80,6 +100,7 @@ const TeamPage = () => {
                 <div
                   key={project.id}
                   onClick={() => {
+                    dispatch(setSelectedProject(project));
                     navigate(`/project/${project.id}`);
                   }}
                   className='flex flex-col gap-2 bg-gray-100 p-4 rounded-md hover:bg-gray-200 transition-colors cursor-pointer'

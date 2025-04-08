@@ -17,7 +17,10 @@ const todoSlice = createSlice({
       state.teams.push({ ...action.payload });
     },
     addProject: (state, action: PayloadAction<Project>) => {
-      const team = state.teams.find((team) => team.id === action.payload.id);
+      const team = state.teams.find(
+        (team) => team.id === action.payload.teamId
+      );
+
       if (team) {
         team.projects.push(action.payload);
       }

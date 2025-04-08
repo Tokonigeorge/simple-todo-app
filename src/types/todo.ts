@@ -7,6 +7,7 @@ export default interface Team {
 }
 
 export interface Project {
+  teamId: string;
   id: string;
   name: string;
   description: string;

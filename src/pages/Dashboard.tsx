@@ -63,14 +63,14 @@ const Dashboard = () => {
               Create Team
             </button>
           </div>
-          <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4'>
+          <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 '>
             {teams.map((team) => (
               <div
                 key={team.id}
                 onClick={() => {
                   navigate(`/team/${team.id}`);
                 }}
-                className='bg-gray-100 rounded-md p-4 shadow-md'
+                className='bg-gray-100 rounded-md p-4 shadow-md cursor-pointer hover:bg-gray-200 transition-colors'
               >
                 <p className='text-lg font-bold'>{team.name}</p>
                 <p className='text-sm text-gray-500'>{team.description}</p>

@@ -25,6 +25,7 @@ const TeamPage = () => {
     dispatch(
       addProject({
         id: uuidv4(),
+        teamId: team?.id || '',
         name: projectName,
         description: projectDescription,
         status: 'active',
@@ -44,7 +45,7 @@ const TeamPage = () => {
     const team = teams.find((team) => team.id === id);
 
     setTeam(team || null);
-  }, [id]);
+  }, [id, teams]);
 
   return (
     <div className='h-screen p-6 overflow-hidden'>
@@ -76,8 +77,15 @@ const TeamPage = () => {
             <div className='flex flex-col gap-2'>
               <h2 className='text-2xl font-bold'>Projects</h2>
               {team.projects.map((project) => (
-                <div key={project.id}>
+                <div
+                  key={project.id}
+                  onClick={() => {
+                    navigate(`/project/${project.id}`);
+                  }}
+                  className='flex flex-col gap-2 bg-gray-100 p-4 rounded-md hover:bg-gray-200 transition-colors cursor-pointer'
+                >
                   <p className='text-sm text-gray-500'>{project.name}</p>
+                  <p className='text-sm text-gray-500'>{project.description}</p>
                 </div>
               ))}
             </div>

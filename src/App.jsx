@@ -9,6 +9,7 @@ import {
 import { Provider } from 'react-redux';
 import { store } from './store/store';
 import TeamPage from './pages/Team';
+import ProjectPage from './pages/Project';
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
         <Routes>
           <Route path='/' element={<Dashboard />} />
           <Route path='/team/:id' element={<TeamPage />} />
+          <Route path='/project/:id' element={<ProjectPage />} />
           <Route path='*' element={<Navigate to='/' replace />} />
         </Routes>
       </Router>

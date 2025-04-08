@@ -10,7 +10,7 @@ const Modal = ({
 }) => {
   return (
     <div className='fixed inset-0 bg-gray-50 bg-opacity-50 flex items-center justify-center '>
-      <div className='bg-white p-8 rounded-lg max-w-md m-auto min-h-1/3'>
+      <div className='bg-white p-8 rounded-lg min-w-lg m-auto min-h-1/3'>
         <div className='flex justify-end'>
           <button
             onClick={onClose}

@@ -1,6 +1,7 @@
 export default interface Team {
   id: string;
   name: string;
+  description?: string;
   projects: Project[];
   members: Member[];
 }

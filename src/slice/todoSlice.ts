@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import Team from '../types/todo';
+import Team, { Project } from '../types/todo';
 
 interface TodoState {
   teams: Team[];
@@ -14,10 +14,16 @@ const todoSlice = createSlice({
   initialState,
   reducers: {
     addTeam: (state, action: PayloadAction<Team>) => {
-      state.teams.push(action.payload);
+      state.teams.push({ ...action.payload });
+    },
+    addProject: (state, action: PayloadAction<Project>) => {
+      const team = state.teams.find((team) => team.id === action.payload.id);
+      if (team) {
+        team.projects.push(action.payload);
+      }
     },
   },
 });
 
-export const { addTeam } = todoSlice.actions;
+export const { addTeam, addProject } = todoSlice.actions;
 export default todoSlice.reducer;

@@ -1,14 +1,26 @@
 import './App.css';
-import TodoContainer from './components/TodoContainer';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import Dashboard from './pages/Dashboard';
+import {
+  BrowserRouter as Router,
+  Route,
+  Routes,
+  Navigate,
+} from 'react-router-dom';
+import { Provider } from 'react-redux';
+import { store } from './store/store';
+import TeamPage from './pages/Team';
 
 function App() {
   return (
-    <Router>
-      <Routes>
-        <Route path='/' element={<TodoContainer />} />
-      </Routes>
-    </Router>
+    <Provider store={store}>
+      <Router>
+        <Routes>
+          <Route path='/' element={<Dashboard />} />
+          <Route path='/team/:id' element={<TeamPage />} />
+          <Route path='*' element={<Navigate to='/' replace />} />
+        </Routes>
+      </Router>
+    </Provider>
   );
 }
 

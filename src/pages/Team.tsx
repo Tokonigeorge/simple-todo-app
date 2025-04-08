@@ -2,7 +2,7 @@ import { useParams } from 'react-router-dom';
 import { useAppSelector } from '../store/hook';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Team from '../types/todo';
+import { Team } from '../types/todo';
 import Button from '../components/Button';
 import { ArrowLeft } from 'lucide-react';
 import { addProject, setSelectedProject } from '../slice/todoSlice';

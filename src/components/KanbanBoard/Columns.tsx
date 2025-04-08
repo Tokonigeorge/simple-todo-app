@@ -1,10 +1,10 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import { ItemTypes } from '../../types/dndTypes';
 import { useDrop } from 'react-dnd';
-import { Column } from '../../types/todo';
+import { Column, ICard, Team } from '../../types/todo';
 import Card from './Card';
 import { Plus } from 'lucide-react';
-
+import CardForm from './CardForm';
 interface ColumnsProps {
   column: Column;
   moveCard: (
@@ -13,10 +13,22 @@ interface ColumnsProps {
     targetColumnId: string
   ) => void;
   deleteCard: (cardId: string, columnId: string) => void;
-  addCard: (columnId: string) => void;
+  addCard: (columnId: string, card: ICard) => void;
+  team: Team;
+  updateCard: (columnId: string, card: ICard) => void;
 }
-const Columns = ({ column, moveCard, deleteCard, addCard }: ColumnsProps) => {
+const Columns = ({
+  column,
+  moveCard,
+  deleteCard,
+  addCard,
+  team,
+  updateCard,
+}: ColumnsProps) => {
   const ref = useRef<HTMLDivElement>(null);
+  const [showForm, setShowForm] = useState(false);
+  const [editCard, setEditCard] = useState<ICard | null>(null);
+
   const [{ isOver }, drop] = useDrop({
     accept: ItemTypes.CARD,
     hover: (item: { id: string; columnId: string }, monitor) => {
@@ -40,6 +52,22 @@ const Columns = ({ column, moveCard, deleteCard, addCard }: ColumnsProps) => {
     }),
   });
 
+  const handleAddCard = (card: ICard) => {
+    if (editCard) {
+      updateCard(column.id, card);
+    } else {
+      card.status =
+        column.name === 'Todo'
+          ? 'todo'
+          : column.name === 'In Progress'
+          ? 'in_progress'
+          : 'done';
+      addCard(column.id, card);
+    }
+    setShowForm(false);
+    setEditCard(null);
+  };
+
   drop(ref);
 
   return (
@@ -55,19 +83,32 @@ const Columns = ({ column, moveCard, deleteCard, addCard }: ColumnsProps) => {
           <span className='text-sm text-gray-500'>
             {column.cards.length} cards
           </span>
-          <button onClick={() => addCard(column.id)}>
+          <button onClick={() => setShowForm(true)}>
             <Plus className='w-4 h-4' />
           </button>
         </div>
       </div>
+      {showForm && (
+        <CardForm
+          team={team}
+          columnName={column.name}
+          onSubmit={handleAddCard}
+          existingCard={editCard}
+        />
+      )}
       <div className='flex flex-col gap-2'>
         {column.cards.map((card) => (
           <Card
             key={card.id}
             card={card}
+            existingCard={editCard}
             columnId={column.id}
             onMoveCard={moveCard}
             handleDeleteCard={deleteCard}
+            editCard={(card) => {
+              setEditCard(card);
+              setShowForm(true);
+            }}
           />
         ))}
       </div>

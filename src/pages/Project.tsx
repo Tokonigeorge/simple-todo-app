@@ -2,8 +2,8 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useAppSelector } from '../store/hook';
 import { useEffect, useState } from 'react';
 import { ArrowLeft } from 'lucide-react';
-import Team, { Project } from '../types/todo';
-import { deleteCard, addCard, moveCard } from '../slice/todoSlice';
+import { Team, Project, ICard } from '../types/todo';
+import { deleteCard, addCard, moveCard, updateCard } from '../slice/todoSlice';
 import { useDispatch } from 'react-redux';
 import { v4 as uuidv4 } from 'uuid';
 import Board from '../components/KanbanBoard/Board';
@@ -46,17 +46,20 @@ const ProjectPage = () => {
     dispatch(deleteCard({ cardId, columnId }));
   };
 
-  const handleAddCard = (columnId: string) => {
-    dispatch(
-      addCard({
-        card: { id: uuidv4(), name: '', description: '', status: 'todo' },
-        columnId,
-      })
-    );
+  const handleAddCard = (columnId: string, card: ICard) => {
+    dispatch(addCard({ columnId, card }));
   };
 
+  const handleUpdateCard = (columnId: string, card: ICard) => {
+    dispatch(updateCard({ columnId, card }));
+  };
+
+  if (!team) {
+    return <div>Team not found</div>;
+  }
+
   return (
-    <div className='h-screen p-6 overflow-hidden'>
+    <div className='h-screen p-6 '>
       <div
         className='flex items-center gap-2 cursor-pointer hover:bg-gray-100 p-2 w-fit rounded-md transition-colors'
         onClick={() => navigate(-1)}
@@ -74,6 +77,8 @@ const ProjectPage = () => {
           moveCard={handleMoveCard}
           deleteCard={handleDeleteCard}
           addCard={handleAddCard}
+          team={team}
+          updateCard={handleUpdateCard}
         />
       </div>
     </div>

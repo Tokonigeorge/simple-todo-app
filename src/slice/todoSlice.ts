@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import Team, { Card, Project } from '../types/todo';
+import { Team, Project, ICard } from '../types/todo';
 
 interface TodoState {
   teams: Team[];
@@ -9,6 +9,22 @@ interface TodoState {
 const initialState: TodoState = {
   teams: [],
   selectedProject: null,
+};
+
+const updateTeamData = (state: TodoState) => {
+  if (state.selectedProject) {
+    const team = state.teams.find(
+      (team) => team.id === state.selectedProject!.teamId
+    );
+    if (team) {
+      const projectIndex = team.projects.findIndex(
+        (project) => project.id === state.selectedProject!.id
+      );
+      if (projectIndex !== -1) {
+        team.projects[projectIndex] = { ...state.selectedProject! };
+      }
+    }
+  }
 };
 
 const todoSlice = createSlice({
@@ -33,7 +49,7 @@ const todoSlice = createSlice({
 
     addCard: (
       state,
-      action: PayloadAction<{ card: Card; columnId: string }>
+      action: PayloadAction<{ card: ICard; columnId: string }>
     ) => {
       const { card, columnId } = action.payload;
       const project = state.selectedProject;
@@ -44,6 +60,7 @@ const todoSlice = createSlice({
 
         if (column) {
           column.cards.push(card);
+          updateTeamData(state);
         }
       }
     },
@@ -72,7 +89,14 @@ const todoSlice = createSlice({
             sourceColumn.cards = sourceColumn.cards.filter(
               (c) => c.id !== cardId
             );
+            card.status =
+              targetColumn.name === 'Todo'
+                ? 'todo'
+                : targetColumn.name === 'In Progress'
+                ? 'in_progress'
+                : 'done';
             targetColumn.cards.push(card);
+            updateTeamData(state);
           }
         }
       }
@@ -90,6 +114,25 @@ const todoSlice = createSlice({
         );
         if (column) {
           column.cards = column.cards.filter((c) => c.id !== cardId);
+          updateTeamData(state);
+        }
+      }
+    },
+    updateCard: (
+      state,
+      action: PayloadAction<{ columnId: string; card: ICard }>
+    ) => {
+      const { columnId, card } = action.payload;
+      const project = state.selectedProject;
+      if (project) {
+        const column = project.board.columns.find(
+          (column) => column.id === columnId
+        );
+        if (column) {
+          const cardIndex = column.cards.findIndex((c) => c.id === card.id);
+          if (cardIndex !== -1) {
+            column.cards[cardIndex] = card;
+          }
         }
       }
     },
@@ -103,5 +146,6 @@ export const {
   addCard,
   moveCard,
   deleteCard,
+  updateCard,
 } = todoSlice.actions;
 export default todoSlice.reducer;

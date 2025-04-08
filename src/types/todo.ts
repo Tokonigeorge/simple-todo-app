@@ -1,4 +1,4 @@
-export default interface Team {
+export interface Team {
   id: string;
   name: string;
   description?: string;
@@ -32,7 +32,7 @@ export interface ICard {
   name: string;
   description?: string;
   status: 'todo' | 'in_progress' | 'done';
-  dueDate?: Date;
+  dueDate?: string;
   assignee?: Member;
   priority: 'low' | 'medium' | 'high';
   comments?: Comment[];

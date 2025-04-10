@@ -10,17 +10,16 @@ import { Provider } from 'react-redux';
 import { store } from './store/store';
 import TeamPage from './pages/Team';
 import ProjectPage from './pages/Project';
+import { Toaster } from 'react-hot-toast';
+
+import AppRoutes from './routes';
 
 function App() {
   return (
     <Provider store={store}>
       <Router>
-        <Routes>
-          <Route path='/' element={<Dashboard />} />
-          <Route path='/team/:id' element={<TeamPage />} />
-          <Route path='/project/:id' element={<ProjectPage />} />
-          <Route path='*' element={<Navigate to='/' replace />} />
-        </Routes>
+        <Toaster position='top-right' />
+        <AppRoutes />
       </Router>
     </Provider>
   );

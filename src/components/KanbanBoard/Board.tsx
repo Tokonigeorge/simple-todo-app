@@ -65,7 +65,7 @@ const Board = React.memo(
 
         const newProgress = Math.round((completedCards / totalCards) * 100);
         setProgress(newProgress);
-        console.log(newProgress, selectedProject);
+
         if (newProgress === 100) {
           dispatch(
             updateProject({
@@ -83,6 +83,7 @@ const Board = React.memo(
           <FilterComponent filter={filter} setFilter={setFilter} team={team} />
           <div className='h-2.5 w-full rounded-full bg-gray-200'>
             <div
+              data-testid='progress-bar'
               className='bg-blue-600 h-full rounded-full'
               style={{ width: `${progress}%` }}
             ></div>

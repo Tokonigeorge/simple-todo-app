@@ -110,7 +110,7 @@ export const projectService = {
     const team = await teamService.getTeamById(teamId);
     const updatedTeam = {
       ...team,
-      projects: [...team.projects, { ...project, id: uuidv4() }],
+      projects: [...team.projects, { ...project, id: Date.now().toString() }],
     };
     const response = await teamService.updateTeam(teamId, updatedTeam);
     return response.projects[response.projects.length - 1];
@@ -164,7 +164,7 @@ export const cardService = {
     if (!card) {
       return;
     }
-    const updatedProject = team.projects.map((p) => {
+    const updatedProjects = team.projects.map((p) => {
       if (p.id === projectId) {
         const updatedColumns = p.board.columns.map((c) => {
           if (c.id === sourceColumnId) {
@@ -199,7 +199,7 @@ export const cardService = {
       }
       return p;
     });
-    await teamService.updateTeam(teamId, { projects: updatedProject });
+    await teamService.updateTeam(teamId, { projects: updatedProjects });
   },
 
   addCard: async (

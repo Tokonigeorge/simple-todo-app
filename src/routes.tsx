@@ -15,7 +15,7 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   if (initializing) {
     return <div>Initializing...</div>;
   }
-  console.log(user);
+
   if (!user) {
     return <Navigate to='/login' replace />;
   }

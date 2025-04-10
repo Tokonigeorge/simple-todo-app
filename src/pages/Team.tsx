@@ -62,8 +62,13 @@ const TeamPage = () => {
       },
     };
     try {
-      await dispatch(createProject(newProject)).unwrap();
+      await dispatch(
+        createProject({ teamId: team?.id || '', project: newProject })
+      ).unwrap();
       toast.success('Project created successfully');
+      const updatedTeam = await teamService.getTeamById(team.id || '');
+      setTeam(updatedTeam);
+
       setIsModalOpen(false);
       setProjectName('');
       setProjectDescription('');

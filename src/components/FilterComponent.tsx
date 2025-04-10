@@ -25,11 +25,12 @@ const FilterComponent: FC<FilterComponentProps> = ({
   return (
     <div className='flex gap-2 flex-wrap justify-between'>
       <div className='flex flex-col gap-2'>
-        <label htmlFor='priority'>Priority</label>
+        <label htmlFor='priority-select'>Priority</label>
         <select
           value={filter.priority}
           onChange={handlePriorityChange}
           className='border border-gray-300 rounded-md p-2'
+          id='priority-select'
         >
           <option value='all'>All</option>
           <option value='high'>High</option>
@@ -38,8 +39,9 @@ const FilterComponent: FC<FilterComponentProps> = ({
         </select>
       </div>
       <div className='flex flex-col gap-2'>
-        <label htmlFor='assignee'>Assignee</label>
+        <label htmlFor='assignee-select'>Assignee</label>
         <select
+          id='assignee-select'
           value={filter.assignee}
           onChange={handleAssigneeChange}
           className='border border-gray-300 rounded-md p-2'

@@ -54,6 +54,268 @@
           }
         }
       ]
+    },
+    {
+      "id": "d3f3",
+      "name": "New Team",
+      "description": "A new team description",
+      "members": [
+        {
+          "id": "25510782-d462-4f35-b9bc-f2e3e819c854",
+          "name": "John Doe",
+          "email": "",
+          "role": "member"
+        }
+      ],
+      "projects": [
+        {
+          "teamId": "d3f3",
+          "name": "s",
+          "description": "s",
+          "status": "active",
+          "board": {
+            "id": "6f738445-9a41-4e35-9743-e21fb6a3e9d3",
+            "progress": 0,
+            "columns": [
+              {
+                "id": "15862052-a5e5-4458-a0f1-8daf2e2dae3b",
+                "name": "To Do",
+                "cards": [
+                  {
+                    "id": "5b987ff4-56e2-4e2d-8bf2-2a31dbd96bd9",
+                    "name": "s",
+                    "description": "s",
+                    "tags": [],
+                    "dueDate": "2025-04-25T00:00:00.000Z",
+                    "priority": "low",
+                    "status": "to_do"
+                  }
+                ]
+              },
+              {
+                "id": "608688fd-16f1-44c6-b1f5-801ecd3e7b1f",
+                "name": "In Progress",
+                "cards": [
+                  {
+                    "id": "1c033d87-188f-400a-a399-ff5f53ab693c",
+                    "name": "s",
+                    "description": "",
+                    "tags": [
+                      "s"
+                    ],
+                    "dueDate": "2025-04-11T00:00:00.000Z",
+                    "priority": "low",
+                    "status": "in_progress"
+                  },
+                  {
+                    "id": "0225d4af-c339-4039-90d3-4d78dc601160",
+                    "name": "s",
+                    "description": "",
+                    "tags": [
+                      "s"
+                    ],
+                    "dueDate": "2025-04-11T00:00:00.000Z",
+                    "priority": "low",
+                    "status": "in_progress"
+                  },
+                  {
+                    "id": "094229b9-df2d-4b61-ac3f-343d0b047620",
+                    "name": "s",
+                    "description": "",
+                    "tags": [
+                      "s"
+                    ],
+                    "dueDate": "2025-04-11T00:00:00.000Z",
+                    "priority": "low",
+                    "status": "in_progress"
+                  }
+                ]
+              },
+              {
+                "id": "00fc0c11-a470-4f23-8256-3744f8052a90",
+                "name": "Done",
+                "cards": []
+              }
+            ]
+          },
+          "id": "1744285703105"
+        }
+      ]
+    },
+    {
+      "id": "1505",
+      "name": "New Team",
+      "description": "A new team description",
+      "members": [
+        {
+          "id": "c7eb907d-eea8-4463-b570-f4063f9d10ff",
+          "name": "John Doe",
+          "email": "",
+          "role": "member"
+        }
+      ],
+      "projects": [
+        {
+          "teamId": "1505",
+          "name": "s",
+          "description": "s",
+          "status": "active",
+          "board": {
+            "id": "3d7d77a6-8351-4fbe-b85f-72a8c09b5865",
+            "progress": 0,
+            "columns": [
+              {
+                "id": "89405c1c-906a-41f4-ae51-311701a09f6b",
+                "name": "To Do",
+                "cards": []
+              },
+              {
+                "id": "f1d4a620-f6d1-4d2d-935d-5eb7cb8bf772",
+                "name": "In Progress",
+                "cards": []
+              },
+              {
+                "id": "70d24c71-d781-4409-852f-2c0da2c290e8",
+                "name": "Done",
+                "cards": []
+              }
+            ]
+          },
+          "id": "1744285654804"
+        }
+      ]
+    },
+    {
+      "id": "aefb",
+      "name": "s",
+      "description": "s",
+      "members": [
+        {
+          "id": "8a91c4bb-3184-4b24-b4c1-40e91393c519",
+          "name": "s",
+          "email": "",
+          "role": "member"
+        }
+      ],
+      "projects": [
+        {
+          "teamId": "aefb",
+          "name": "s",
+          "description": "s",
+          "status": "active",
+          "board": {
+            "id": "bfc56956-6cb5-4051-a1f5-87d0a5e407aa",
+            "progress": 0,
+            "columns": [
+              {
+                "id": "4950c9a5-e44a-40fa-85d5-a5d077a1a612",
+                "name": "To Do",
+                "cards": []
+              },
+              {
+                "id": "d477d527-f405-4564-ac6d-bb1b53fe8311",
+                "name": "In Progress",
+                "cards": []
+              },
+              {
+                "id": "9cff6a64-6486-435d-8a86-deed3aedbf12",
+                "name": "Done",
+                "cards": []
+              }
+            ]
+          },
+          "id": "8b513372-69d4-4305-8765-23d3131cde9e"
+        },
+        {
+          "teamId": "aefb",
+          "name": "s",
+          "description": "s",
+          "status": "active",
+          "board": {
+            "id": "642eb63d-ec0f-45ad-aa92-60666d691e3a",
+            "progress": 0,
+            "columns": [
+              {
+                "id": "0aca4235-cdec-4a97-837b-dc9b1a61581b",
+                "name": "To Do",
+                "cards": []
+              },
+              {
+                "id": "9d33e9ba-7d41-4932-bb79-678c002a6c52",
+                "name": "In Progress",
+                "cards": []
+              },
+              {
+                "id": "0c961092-f012-4143-989c-e2cc1ab7b7ba",
+                "name": "Done",
+                "cards": []
+              }
+            ]
+          },
+          "id": "c6853bf8-5c3d-42e4-9442-9684b4ca7438"
+        }
+      ]
+    },
+    {
+      "id": "4086",
+      "name": "Team 1",
+      "description": "React App for A saas Development project",
+      "members": [
+        {
+          "id": "3198eb32-95e0-4aa0-8b94-42dadb0faab0",
+          "name": "Bukola",
+          "email": "",
+          "role": "member"
+        }
+      ],
+      "projects": [
+        {
+          "teamId": "4086",
+          "name": "Project 1",
+          "description": "React App for A saas Development project",
+          "status": "active",
+          "board": {
+            "id": "54624dc4-ddc6-422b-b4f7-6830f64d82c3",
+            "progress": 0,
+            "columns": [
+              {
+                "id": "8bfb8645-e3ca-4c16-8205-f8f5adb61c12",
+                "name": "To Do",
+                "cards": []
+              },
+              {
+                "id": "ad278799-acff-4dfb-bbee-48f84950fda1",
+                "name": "In Progress",
+                "cards": []
+              },
+              {
+                "id": "a78892bb-2228-4e12-9cd4-a7a101be9ee0",
+                "name": "Done",
+                "cards": [
+                  {
+                    "id": "a553f6fb-044b-49fc-868c-e5711db2689b",
+                    "name": "Api doc",
+                    "description": "API documentation for a project",
+                    "tags": [
+                      "Doc"
+                    ],
+                    "dueDate": "2025-04-25T00:00:00.000Z",
+                    "assignee": {
+                      "id": "3198eb32-95e0-4aa0-8b94-42dadb0faab0",
+                      "name": "Bukola",
+                      "email": "",
+                      "role": "member"
+                    },
+                    "priority": "medium",
+                    "status": "done"
+                  }
+                ]
+              }
+            ]
+          },
+          "id": "1744286814091"
+        }
+      ]
     }
   ],
   "users": [
@@ -72,6 +334,16 @@
       "displayName": "Bukola Ebikefe",
       "photoURL": "https://lh3.googleusercontent.com/a/ACg8ocKSDN8Ye9C1imQ0EZF27FT4XYKbp9ZQdtnJz9cwCAGxGR1EZQ=s96-c",
       "lastLoginAt": "2025-04-10T10:12:32.597Z"
+    },
+    {
+      "id": "3100",
+      "email": "test@example.com",
+      "lastLoginAt": "2025-04-10T11:18:59.471Z"
+    },
+    {
+      "id": "3871",
+      "email": "test@example.com",
+      "lastLoginAt": "2025-04-10T11:18:59.530Z"
     }
   ]
 }

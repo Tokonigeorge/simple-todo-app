@@ -54,7 +54,6 @@ const Columns = ({
   };
 
   drop(ref);
-
   return (
     <div
       ref={ref}
@@ -68,7 +67,7 @@ const Columns = ({
           <span className='text-sm text-gray-500'>
             {column.cards.length} cards
           </span>
-          <button onClick={() => setShowForm(true)}>
+          <button aria-label='plus' onClick={() => setShowForm(true)}>
             <Plus className='w-4 h-4' />
           </button>
         </div>

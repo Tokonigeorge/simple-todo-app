@@ -31,16 +31,15 @@ export const createTeam = createAsyncThunk(
 
 export const createProject = createAsyncThunk(
   'todo/createProject',
-  async (project: Omit<Project, 'id'>, { rejectWithValue }) => {
-    try {
-      const newProject = await projectService.createProject(
-        project.teamId,
-        project
-      );
-      return newProject;
-    } catch (error) {
-      return rejectWithValue(error);
-    }
+  async ({
+    teamId,
+    project,
+  }: {
+    teamId: string;
+    project: Omit<Project, 'id'>;
+  }) => {
+    const newProject = await projectService.createProject(teamId, project);
+    return { teamId, project: newProject };
   }
 );
 
@@ -162,11 +161,10 @@ const todoSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder.addCase(createProject.fulfilled, (state, action) => {
-      state.teams = state.teams.map((team) =>
-        team.id === action.payload.teamId
-          ? { ...team, projects: [...team.projects, action.payload] }
-          : team
-      );
+      const team = state.teams.find((t) => t.id === action.payload.teamId);
+      if (team) {
+        team.projects.push(action.payload.project);
+      }
     });
     builder.addCase(createTeam.fulfilled, (state, action) => {
       state.teams.push(action.payload);

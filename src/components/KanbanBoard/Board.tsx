@@ -83,7 +83,7 @@ const Board = ({
         <div className='h-2.5 w-full rounded-full bg-gray-200'>
           <div
             className='bg-blue-600 h-full rounded-full'
-            style={{ width: `${progress}` }}
+            style={{ width: `${progress}%` }}
           ></div>
         </div>
       </div>

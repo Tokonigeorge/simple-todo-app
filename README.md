@@ -1,58 +1,70 @@
-## React Tutorial – The Beginners Guide to Learning React JS in 2020
+## React Todo App with TypeScript and Vite
 
-[To follow this React tutorial](https://ibaslogic.com/blog/react-tutorial-for-beginners/)
+A modern React application built with TypeScript, Vite, and Vitest for testing.
 
-### Clone the starter project
+### Clone the project
 
-You can download or clone this project by running this command from your terminal:
-
-```
+```bash
 git clone https://github.com/Ibaslogic/simple-todo-app
 ```
 
-This will create a directory in the name of the project folder.
+### Installation
 
-Once you have the project files and folders bootstrapped, open it with your text editor.
+Once you have the project files, switch to the project directory and run:
 
-Next, switch inside the project directory and run:
-
-```
+```bash
 npm install
 ```
 
 This will install all the necessary dependencies in the local `node_modules` folder.
 
-### Setting up the Testing Environment
+### Development
 
-To run tests, ensure you have the following packages installed:
+To start the development server:
 
-- **Jest**: A delightful JavaScript Testing Framework with a focus on simplicity.
-- **@testing-library/react**: Simple and complete React DOM testing utilities that encourage good testing practices.
-- **redux-mock-store**: A mock store for testing Redux async action creators and middleware.
-- **babel-jest**: Jest plugin to use Babel for transformation.
-
-You can install these testing dependencies by running:
-
-```
-npm install --save-dev jest @testing-library/react redux-mock-store babel-jest
-```
-
-### Running the Development Server
-
-Finally, start your development server by running:
-
-```
+```bash
 npm start
 ```
 
-You should see the app in your browser address bar at [http://localhost:5173](http://localhost:5173) by default, unless you have configured a different port.
+The application will be available at [http://localhost:5173](http://localhost:5173)
 
-### Running Tests
+### Testing
 
-To run the tests, use the following command:
+This project uses Vitest for testing. The following commands are available:
 
-```
+```bash
+# Run tests in watch mode
 npm test
+
+# Run tests with coverage
+npm run coverage
 ```
 
-This will execute all the test files in the project using Jest.
+#### Testing Setup
+
+The project includes:
+
+- **Vitest**: Fast Vite-native testing framework
+- **@testing-library/react**: React testing utilities
+- **@testing-library/jest-dom**: Custom jest matchers for DOM testing
+- **jsdom**: DOM environment for testing
+
+### Building for Production
+
+To create a production build:
+
+```bash
+npm run build
+```
+
+### Technologies Used
+
+- React 18
+- TypeScript
+- Vite
+- Vitest
+- React Testing Library
+- TailwindCSS
+- Redux Toolkit
+- React Router DOM
+- React DnD

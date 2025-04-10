@@ -31,22 +31,7 @@ const Columns = ({
 
   const [{ isOver }, drop] = useDrop({
     accept: ItemTypes.CARD,
-    hover: (item: { id: string; columnId: string }, monitor) => {
-      if (!ref.current) {
-        return;
-      }
-      const dragIndex = item.id;
-      const sourceColumnId = item.columnId;
-      const targetColumnId = column.id;
-
-      if (dragIndex === sourceColumnId) {
-        return;
-      }
-
-      moveCard(dragIndex, sourceColumnId, targetColumnId);
-
-      item.columnId = targetColumnId;
-    },
+    drop: () => ({ columnId: column.id }),
     collect: (monitor) => ({
       isOver: !!monitor.isOver(),
     }),
@@ -73,7 +58,7 @@ const Columns = ({
   return (
     <div
       ref={ref}
-      className={`bg-gray-50 p-4 rounded-lg h-full flex flex-col ${
+      className={`bg-gray-50 p-4 rounded-lg h-full min-h-[300px] flex flex-col ${
         isOver ? 'bg-gray-100' : ''
       }`}
     >

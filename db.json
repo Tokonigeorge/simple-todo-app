@@ -26,6 +26,16 @@
               {
                 "id": "c1",
                 "name": "To Do",
+                "cards": []
+              },
+              {
+                "id": "c2",
+                "name": "In Progress",
+                "cards": []
+              },
+              {
+                "id": "c3",
+                "name": "Done",
                 "cards": [
                   {
                     "id": "5410e073-d9fe-4648-9605-f342e01d6b4f",
@@ -36,19 +46,9 @@
                     ],
                     "dueDate": "2025-04-10T00:00:00.000Z",
                     "priority": "low",
-                    "status": "to_do"
+                    "status": "done"
                   }
                 ]
-              },
-              {
-                "id": "c2",
-                "name": "In Progress",
-                "cards": []
-              },
-              {
-                "id": "c3",
-                "name": "Done",
-                "cards": []
               }
             ]
           }

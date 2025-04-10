@@ -1,7 +1,7 @@
 import React, { useRef, useState } from 'react';
 import { ItemTypes } from '../../types/dndTypes';
 import { useDrop } from 'react-dnd';
-import { Column, ICard, Team } from '../../types/todo';
+import { Column, ICard, Team, CardStatus } from '../../types/todo';
 import Card from './Card';
 import { Plus } from 'lucide-react';
 import CardForm from './CardForm';
@@ -43,10 +43,10 @@ const Columns = ({
     } else {
       card.status =
         column.name === 'To Do'
-          ? 'todo'
+          ? CardStatus.TODO
           : column.name === 'In Progress'
-          ? 'in_progress'
-          : 'done';
+          ? CardStatus.IN_PROGRESS
+          : CardStatus.DONE;
       addCard(column.id, card);
     }
     setShowForm(false);

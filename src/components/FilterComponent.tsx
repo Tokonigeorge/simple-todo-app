@@ -46,7 +46,9 @@ const FilterComponent: FC<FilterComponentProps> = ({
         >
           <option value='all'>All</option>
           {team.members?.map((member) => (
-            <option value={member.id}>{member.name}</option>
+            <option key={member.id} value={member.id}>
+              {member.name}
+            </option>
           ))}
         </select>
       </div>

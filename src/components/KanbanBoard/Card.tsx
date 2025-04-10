@@ -31,14 +31,6 @@ const Card = ({
   const ref = useRef<HTMLDivElement>(null);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false);
 
-  // const [{ isDragging }, drag] = useDrag({
-  //   type: ItemTypes.CARD,
-  //   item: { id: card.id, columnId },
-  //   collect: (monitor) => ({
-  //     isDragging: !!monitor.isDragging(),
-  //   }),
-  // });
-
   const [{ isDragging }, drag] = useDrag({
     type: ItemTypes.CARD,
     item: { id: card.id, columnId },
@@ -52,25 +44,6 @@ const Card = ({
       isDragging: !!monitor.isDragging(),
     }),
   });
-
-  // const [{ isOver }, drop] = useDrop({
-  //   accept: ItemTypes.CARD,
-  //   hover: (item: { id: string; columnId: string }, monitor) => {
-  //     if (!ref.current) {
-  //       return;
-  //     }
-  //     const dragIndex = item.id;
-  //     const hoverIndex = item.columnId;
-
-  //     if (dragIndex === hoverIndex) {
-  //       return;
-  //     }
-  //     onMoveCard(dragIndex, columnId, hoverIndex);
-  //   },
-  //   collect: (monitor) => ({
-  //     isOver: !!monitor.isOver(),
-  //   }),
-  // });
 
   drag(ref);
 

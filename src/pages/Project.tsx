@@ -1,12 +1,11 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useAppSelector } from '../store/hook';
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ArrowLeft } from 'lucide-react';
-import { Team, Project, ICard } from '../types/todo';
-import { deleteCard, addCard, moveCard, updateCard } from '../slice/todoSlice';
-import { useDispatch } from 'react-redux';
+import { Team, Project } from '../types/todo';
 
+import { useCardOperations } from '../hooks/useCardOperations';
 import Board from '../components/KanbanBoard/Board';
 
 const ProjectPage = () => {
@@ -15,7 +14,9 @@ const ProjectPage = () => {
   const navigate = useNavigate();
   const [project, setProject] = useState<Project | null>(null);
   const [team, setTeam] = useState<Team | null>(null);
-  const dispatch = useDispatch();
+
+  const { handleMoveCard, handleAddCard, handleDeleteCard, handleUpdateCard } =
+    useCardOperations(team, project);
 
   useEffect(() => {
     if (!id) {
@@ -35,33 +36,15 @@ const ProjectPage = () => {
     setProject(projectItem || null);
   }, [id, teams]);
 
-  const handleMoveCard = (
-    cardId: string,
-    sourceColumnId: string,
-    targetColumnId: string
-  ) => {
-    dispatch(moveCard({ cardId, sourceColumnId, targetColumnId }));
-  };
-
-  const handleDeleteCard = useCallback(
-    (cardId: string, columnId: string) => {
-      dispatch(deleteCard({ cardId, columnId }));
-    },
-    [dispatch]
-  );
-
-  const handleAddCard = useCallback(
-    (columnId: string, card: ICard) => {
-      dispatch(addCard({ columnId, card }));
-    },
-    [dispatch]
-  );
-
-  const handleUpdateCard = useCallback(
-    (columnId: string, card: ICard) => {
-      dispatch(updateCard({ columnId, card }));
-    },
-    [dispatch]
+  const boardProps = useMemo(
+    () => ({
+      moveCard: handleMoveCard,
+      deleteCard: handleDeleteCard,
+      addCard: handleAddCard,
+      team: team!,
+      updateCard: handleUpdateCard,
+    }),
+    [handleMoveCard, handleDeleteCard, handleAddCard, handleUpdateCard, team]
   );
 
   if (!team) {
@@ -83,16 +66,10 @@ const ProjectPage = () => {
         <p className='text-sm text-gray-500'>Team: {team?.name}</p>
       </div>
       <div className='mt-4'>
-        <Board
-          moveCard={handleMoveCard}
-          deleteCard={handleDeleteCard}
-          addCard={handleAddCard}
-          team={team}
-          updateCard={handleUpdateCard}
-        />
+        <Board {...boardProps} />
       </div>
     </div>
   );
 };
 
-export default ProjectPage;
+export default React.memo(ProjectPage);

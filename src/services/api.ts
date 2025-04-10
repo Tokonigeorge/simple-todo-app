@@ -1,5 +1,6 @@
 import axios from 'axios';
-import { Team } from '../types/todo';
+import { CardStatus, ICard, Project, Team } from '../types/todo';
+import { v4 as uuidv4 } from 'uuid';
 
 const API_URL = 'http://localhost:3001';
 
@@ -101,5 +102,125 @@ export const userService = {
     } catch (error) {
       return null;
     }
+  },
+};
+
+export const projectService = {
+  createProject: async (teamId: string, project: Omit<Project, 'id'>) => {
+    const team = await teamService.getTeamById(teamId);
+    const updatedTeam = {
+      ...team,
+      projects: [...team.projects, { ...project, id: uuidv4() }],
+    };
+    const response = await teamService.updateTeam(teamId, updatedTeam);
+    return response.projects[response.projects.length - 1];
+  },
+
+  getProjectById: async (teamId: string, projectId: string) => {
+    const response = await teamService.getTeamById(teamId);
+    return response.projects.find((project) => project.id === projectId);
+  },
+
+  updateProject: async (
+    teamId: string,
+    projectId: string,
+    project: Partial<Project>
+  ) => {
+    const team = await teamService.getTeamById(teamId);
+    const updatedProjects = team.projects.map((p) =>
+      p.id === projectId ? { ...p, ...project } : p
+    );
+    const response = await teamService.updateTeam(teamId, {
+      ...team,
+      projects: updatedProjects,
+    });
+    return response.projects.find((p) => p.id === projectId);
+  },
+};
+
+export const cardService = {
+  moveCard: async (
+    teamId: string,
+    projectId: string,
+    cardId: string,
+    sourceColumnId: string,
+    targetColumnId: string
+  ) => {
+    const team = await teamService.getTeamById(teamId);
+    const project = team.projects.find((p) => p.id === projectId);
+    if (!team || !project) {
+      return;
+    }
+    const sourceColumn = project.board.columns.find(
+      (c) => c.id === sourceColumnId
+    );
+    const targetColumn = project.board.columns.find(
+      (c) => c.id === targetColumnId
+    );
+    if (!sourceColumn || !targetColumn) {
+      return;
+    }
+    const card = sourceColumn.cards.find((c) => c.id === cardId);
+    if (!card) {
+      return;
+    }
+    const updatedProject = team.projects.map((p) => {
+      if (p.id === projectId) {
+        const updatedColumns = p.board.columns.map((c) => {
+          if (c.id === sourceColumnId) {
+            return {
+              ...c,
+              cards: c.cards.filter((card) => card.id !== cardId),
+            };
+          }
+          if (c.id === targetColumnId) {
+            return {
+              ...c,
+              cards: [
+                ...c.cards,
+                {
+                  ...card,
+                  status: targetColumn.name
+                    .toLowerCase()
+                    .replace(' ', '_') as CardStatus,
+                },
+              ],
+            };
+          }
+          return c;
+        });
+        return {
+          ...p,
+          board: {
+            ...p.board,
+            columns: updatedColumns,
+          },
+        };
+      }
+      return p;
+    });
+    await teamService.updateTeam(teamId, { projects: updatedProject });
+  },
+
+  addCard: async (
+    teamId: string,
+    projectId: string,
+    columnId: string,
+    card: ICard
+  ) => {
+    const team = await teamService.getTeamById(teamId);
+    const updatedProject = team.projects.map((p) => {
+      if (p.id === projectId) {
+        const updatedColumns = p.board.columns.map((c) => {
+          if (c.id === columnId) {
+            return { ...c, cards: [...c.cards, card] };
+          }
+          return c;
+        });
+        return { ...p, board: { ...p.board, columns: updatedColumns } };
+      }
+      return p;
+    });
+    await teamService.updateTeam(teamId, { projects: updatedProject });
   },
 };

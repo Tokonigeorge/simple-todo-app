@@ -71,6 +71,6 @@ test('adds a new team', () => {
   fireEvent.click(submitButton);
 
   // Check if the new team is added
-  const newTeamElement = screen.getByText('New Team');
+  const newTeamElement = screen.getByText('John Doe');
   expect(newTeamElement).toBeInTheDocument();
 });

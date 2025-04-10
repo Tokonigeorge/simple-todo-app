@@ -1,5 +1,6 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { Team, Project, ICard } from '../types/todo';
+import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { Team, Project, ICard, ProjectStatus, CardStatus } from '../types/todo';
+import { projectService, teamService } from '../services/api';
 
 interface TodoState {
   teams: Team[];
@@ -11,21 +12,36 @@ const initialState: TodoState = {
   selectedProject: null,
 };
 
-const updateTeamData = (state: TodoState) => {
-  if (state.selectedProject) {
-    const team = state.teams.find(
-      (team) => team.id === state.selectedProject!.teamId
-    );
-    if (team) {
-      const projectIndex = team.projects.findIndex(
-        (project) => project.id === state.selectedProject!.id
-      );
-      if (projectIndex !== -1) {
-        team.projects[projectIndex] = { ...state.selectedProject! };
-      }
+export const fetchTeams = createAsyncThunk('todo/fetchTeams', async () => {
+  const teams = await teamService.getAllTeams();
+  return teams;
+});
+
+export const createTeam = createAsyncThunk(
+  'todo/createTeam',
+  async (team: Omit<Team, 'id'>, { rejectWithValue }) => {
+    try {
+      const newTeam = await teamService.createTeam(team);
+      return newTeam;
+    } catch (error) {
+      return rejectWithValue(error);
     }
   }
-};
+);
+
+export const createProject = createAsyncThunk(
+  'todo/createProject',
+  async ({
+    teamId,
+    project,
+  }: {
+    teamId: string;
+    project: Omit<Project, 'id'>;
+  }) => {
+    const newProject = await projectService.createProject(teamId, project);
+    return { teamId, project: newProject };
+  }
+);
 
 const todoSlice = createSlice({
   name: 'todo',
@@ -60,7 +76,6 @@ const todoSlice = createSlice({
 
         if (column) {
           column.cards.push(card);
-          updateTeamData(state);
         }
       }
     },
@@ -91,12 +106,11 @@ const todoSlice = createSlice({
             );
             card.status =
               targetColumn.name === 'To Do'
-                ? 'todo'
+                ? CardStatus.TODO
                 : targetColumn.name === 'In Progress'
-                ? 'in_progress'
-                : 'done';
+                ? CardStatus.IN_PROGRESS
+                : CardStatus.DONE;
             targetColumn.cards.push(card);
-            updateTeamData(state);
           }
         }
       }
@@ -114,7 +128,6 @@ const todoSlice = createSlice({
         );
         if (column) {
           column.cards = column.cards.filter((c) => c.id !== cardId);
-          updateTeamData(state);
         }
       }
     },
@@ -142,13 +155,23 @@ const todoSlice = createSlice({
     ) => {
       const project = state.selectedProject;
       if (project && project.id === action.payload.projectId) {
-        project.status = action.payload.status as
-          | 'active'
-          | 'completed'
-          | 'archived';
-        updateTeamData(state);
+        project.status = action.payload.status as ProjectStatus;
       }
     },
+  },
+  extraReducers: (builder) => {
+    builder.addCase(createProject.fulfilled, (state, action) => {
+      const team = state.teams.find((t) => t.id === action.payload.teamId);
+      if (team) {
+        team.projects.push(action.payload.project);
+      }
+    });
+    builder.addCase(createTeam.fulfilled, (state, action) => {
+      state.teams.push(action.payload);
+    });
+    builder.addCase(fetchTeams.fulfilled, (state, action) => {
+      state.teams = action.payload;
+    });
   },
 });
 

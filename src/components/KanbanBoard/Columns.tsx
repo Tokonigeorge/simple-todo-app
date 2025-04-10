@@ -1,7 +1,7 @@
 import React, { useRef, useState } from 'react';
 import { ItemTypes } from '../../types/dndTypes';
 import { useDrop } from 'react-dnd';
-import { Column, ICard, Team } from '../../types/todo';
+import { Column, ICard, Team, CardStatus } from '../../types/todo';
 import Card from './Card';
 import { Plus } from 'lucide-react';
 import CardForm from './CardForm';
@@ -31,22 +31,7 @@ const Columns = ({
 
   const [{ isOver }, drop] = useDrop({
     accept: ItemTypes.CARD,
-    hover: (item: { id: string; columnId: string }, monitor) => {
-      if (!ref.current) {
-        return;
-      }
-      const dragIndex = item.id;
-      const sourceColumnId = item.columnId;
-      const targetColumnId = column.id;
-
-      if (dragIndex === sourceColumnId) {
-        return;
-      }
-
-      moveCard(dragIndex, sourceColumnId, targetColumnId);
-
-      item.columnId = targetColumnId;
-    },
+    drop: () => ({ columnId: column.id }),
     collect: (monitor) => ({
       isOver: !!monitor.isOver(),
     }),
@@ -58,10 +43,10 @@ const Columns = ({
     } else {
       card.status =
         column.name === 'To Do'
-          ? 'todo'
+          ? CardStatus.TODO
           : column.name === 'In Progress'
-          ? 'in_progress'
-          : 'done';
+          ? CardStatus.IN_PROGRESS
+          : CardStatus.DONE;
       addCard(column.id, card);
     }
     setShowForm(false);
@@ -69,11 +54,10 @@ const Columns = ({
   };
 
   drop(ref);
-
   return (
     <div
       ref={ref}
-      className={`bg-gray-50 p-4 rounded-lg h-full flex flex-col ${
+      className={`bg-gray-50 p-4 rounded-lg h-full min-h-[300px] flex flex-col ${
         isOver ? 'bg-gray-100' : ''
       }`}
     >
@@ -83,7 +67,7 @@ const Columns = ({
           <span className='text-sm text-gray-500'>
             {column.cards.length} cards
           </span>
-          <button onClick={() => setShowForm(true)}>
+          <button aria-label='plus' onClick={() => setShowForm(true)}>
             <Plus className='w-4 h-4' />
           </button>
         </div>

@@ -3,70 +3,107 @@ import { useParams } from 'react-router-dom';
 import { useAppSelector } from '../store/hook';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Team } from '../types/todo';
+import { Team, ProjectStatus } from '../types/todo';
 import Button from '../components/Button';
-import { ArrowLeft } from 'lucide-react';
-import { addProject, setSelectedProject } from '../slice/todoSlice';
+import { ArrowLeft, Loader2 } from 'lucide-react';
+import {
+  addProject,
+  createProject,
+  setSelectedProject,
+} from '../slice/todoSlice';
 import { v4 as uuidv4 } from 'uuid';
 import { useAppDispatch } from '../store/hook';
 import Modal from '../components/Modal';
+import toast from 'react-hot-toast';
+import { teamService } from '../services/api';
 
 const TeamPage = () => {
   const navigate = useNavigate();
   const { id } = useParams();
-  const teams = useAppSelector((state) => state.todo.teams);
   const dispatch = useAppDispatch();
   const [team, setTeam] = useState<Team | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [projectName, setProjectName] = useState('');
   const [projectDescription, setProjectDescription] = useState('');
+  const [isLoading, setIsLoading] = useState(true);
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    dispatch(
-      addProject({
+    if (!team) {
+      toast.error('Team not found');
+      return;
+    }
+
+    const newProject = {
+      teamId: team?.id || '',
+      name: projectName,
+      description: projectDescription,
+      status: ProjectStatus.ACTIVE,
+      board: {
         id: uuidv4(),
-        teamId: team?.id || '',
-        name: projectName,
-        description: projectDescription,
-        status: 'active',
-        board: {
-          id: uuidv4(),
-          progress: 0,
-          columns: [
-            {
-              id: uuidv4(),
-              name: 'To Do',
-              cards: [],
-            },
-            {
-              id: uuidv4(),
-              name: 'In Progress',
-              cards: [],
-            },
-            {
-              id: uuidv4(),
-              name: 'Done',
-              cards: [],
-            },
-          ],
-        },
-      })
-    );
-    setIsModalOpen(false);
-    setProjectName('');
-    setProjectDescription('');
+        progress: 0,
+        columns: [
+          {
+            id: uuidv4(),
+            name: 'To Do',
+            cards: [],
+          },
+          {
+            id: uuidv4(),
+            name: 'In Progress',
+            cards: [],
+          },
+          {
+            id: uuidv4(),
+            name: 'Done',
+            cards: [],
+          },
+        ],
+      },
+    };
+    try {
+      await dispatch(
+        createProject({ teamId: team?.id || '', project: newProject })
+      ).unwrap();
+      toast.success('Project created successfully');
+      const updatedTeam = await teamService.getTeamById(team.id || '');
+      setTeam(updatedTeam);
+
+      setIsModalOpen(false);
+      setProjectName('');
+      setProjectDescription('');
+    } catch (error) {
+      toast.error('Failed to create project');
+    }
   };
 
   useEffect(() => {
-    if (!id) {
-      navigate('/');
-    }
+    const fetchTeam = async () => {
+      if (!id) {
+        navigate('/');
+      }
 
-    const team = teams.find((team) => team.id === id);
+      try {
+        const teamData = await teamService.getTeamById(id || '');
+        setTeam(teamData);
+      } catch (error) {
+        toast.error('Failed to fetch team');
+        navigate('/');
+      } finally {
+        setIsLoading(false);
+      }
+    };
 
-    setTeam(team || null);
-  }, [id, teams]);
+    fetchTeam();
+  }, [id]);
+
+  if (isLoading) {
+    return (
+      <div className='flex items-center justify-center h-screen'>
+        <Loader2 className='w-6 h-6 animate-spin' />
+      </div>
+    );
+  }
 
   return (
     <div className='h-screen p-6 overflow-hidden'>

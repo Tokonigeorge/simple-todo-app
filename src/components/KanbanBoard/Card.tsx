@@ -30,35 +30,21 @@ const Card = ({
 }: CardProps) => {
   const ref = useRef<HTMLDivElement>(null);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false);
-
   const [{ isDragging }, drag] = useDrag({
     type: ItemTypes.CARD,
     item: { id: card.id, columnId },
+
+    end: (item, monitor) => {
+      const dropResult = monitor.getDropResult<{ columnId: string }>();
+      if (dropResult && dropResult.columnId !== columnId) {
+        onMoveCard(card.id, columnId, dropResult.columnId);
+      }
+    },
     collect: (monitor) => ({
       isDragging: !!monitor.isDragging(),
     }),
   });
-
-  const [{ isOver }, drop] = useDrop({
-    accept: ItemTypes.CARD,
-    hover: (item: { id: string; columnId: string }, monitor) => {
-      if (!ref.current) {
-        return;
-      }
-      const dragIndex = item.id;
-      const hoverIndex = item.columnId;
-
-      if (dragIndex === hoverIndex) {
-        return;
-      }
-      onMoveCard(dragIndex, columnId, hoverIndex);
-    },
-    collect: (monitor) => ({
-      isOver: !!monitor.isOver(),
-    }),
-  });
-
-  drag(drop(ref));
+  drag(ref);
 
   const handleDelete = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
@@ -89,10 +75,12 @@ const Card = ({
             e.stopPropagation();
             handleEdit(e);
           }}
+          data-testid='edit-button'
         >
           <Edit className='w-4 h-4' />
         </button>
         <button
+          data-testid='delete-button'
           className='text-red-500 hover:text-red-600 transition-colors cursor-pointer'
           onClick={(e) => {
             e.stopPropagation();

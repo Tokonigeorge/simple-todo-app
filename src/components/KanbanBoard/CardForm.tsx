@@ -87,8 +87,9 @@ const CardForm = ({
       className='bg-white p-4 rounded-lg shadow-md flex flex-col gap-4 pb-4'
     >
       <div className='flex flex-col gap-2'>
-        <label htmlFor='name'>Title</label>
+        <label htmlFor='card-title'>Title</label>
         <input
+          id='card-title'
           type='text'
           required
           className={inputClasses}
@@ -97,8 +98,9 @@ const CardForm = ({
         />
       </div>
       <div className='flex flex-col gap-2'>
-        <label htmlFor='description'>Description</label>
+        <label htmlFor='card-description'>Description</label>
         <input
+          id='card-description'
           type='text'
           className={inputClasses}
           value={cardData.description}
@@ -108,7 +110,7 @@ const CardForm = ({
         />
       </div>
       <div className='mb-4'>
-        <label htmlFor='labels'>Labels</label>
+        <label htmlFor='card-label'>Labels</label>
         <div className='flex flex-wrap gap-2 mb-4'>
           {cardData.tags?.map((label) => (
             <span
@@ -118,6 +120,7 @@ const CardForm = ({
               {label}
               <button
                 className='hover:bg-gray-200 p-1 rounded-md cursor-pointer'
+                data-test-id={'remove'}
                 onClick={() =>
                   setCardData({
                     ...cardData,
@@ -132,6 +135,7 @@ const CardForm = ({
         </div>
         <div className='flex flex-col gap-2'>
           <input
+            id='card-label'
             type='text'
             value={newLabel}
             onChange={(e) => setNewLabel(e.target.value)}
@@ -157,8 +161,9 @@ const CardForm = ({
         </div>
       </div>
       <div className=' flex flex-col gap-2'>
-        <label htmlFor='dueDate'>Due Date</label>
+        <label htmlFor='card-dueDate'>Due Date</label>
         <input
+          id='card-dueDate'
           type='date'
           required
           min={new Date().toISOString().split('T')[0]}
@@ -177,8 +182,9 @@ const CardForm = ({
         />
       </div>
       <div className='mb-4 flex flex-col gap-2'>
-        <label htmlFor='assignee'>Assignee</label>
+        <label htmlFor='card-assignee'>Assignee</label>
         <select
+          id='card-assignee'
           value={cardData.assignee?.name || ''}
           onChange={(e) =>
             setCardData({
@@ -199,8 +205,9 @@ const CardForm = ({
         </select>
       </div>
       <div className='mb-4 flex flex-col gap-2'>
-        <label htmlFor='priority'>Priority</label>
+        <label htmlFor='card-priority'>Priority</label>
         <select
+          id='card-priority'
           className={inputClasses}
           value={cardData.priority}
           onChange={(e) =>

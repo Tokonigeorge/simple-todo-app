@@ -1,71 +1,89 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useAppSelector } from '../store/hook';
-import { useCallback, useEffect, useState } from 'react';
-import { ArrowLeft } from 'lucide-react';
-import { Team, Project, ICard } from '../types/todo';
-import { deleteCard, addCard, moveCard, updateCard } from '../slice/todoSlice';
-import { useDispatch } from 'react-redux';
+import { useEffect, useState } from 'react';
+import { ArrowLeft, Loader2 } from 'lucide-react';
+import { Team, Project } from '../types/todo';
 
+import { useCardOperations } from '../hooks/useCardOperations';
 import Board from '../components/KanbanBoard/Board';
+import { setSelectedProject } from '../slice/todoSlice';
+import { teamService } from '../services/api';
+import { useDispatch } from 'react-redux';
 
 const ProjectPage = () => {
   const { id } = useParams();
-  const teams = useAppSelector((state) => state.todo.teams);
+  const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  const teams = useAppSelector((state) => state.todo.teams);
+
   const [project, setProject] = useState<Project | null>(null);
   const [team, setTeam] = useState<Team | null>(null);
-  const dispatch = useDispatch();
+
+  const [isLoading, setIsLoading] = useState(false);
+
+  const { handleMoveCard, handleAddCard, handleDeleteCard, handleUpdateCard } =
+    useCardOperations(team, project);
 
   useEffect(() => {
-    if (!id) {
-      navigate('/');
-    }
+    const fetchProject = async () => {
+      if (!id) {
+        navigate('/');
+        return;
+      }
 
-    // find the team that contains the project
-    const projectTeam = teams.find((team) =>
-      team.projects.find((project) => project.id === id)
-    );
-    setTeam(projectTeam || null);
-    // find the project in the team
-    const projectItem = projectTeam?.projects.find(
-      (project) => project.id === id
-    );
+      try {
+        const teams = await teamService.getAllTeams();
+        const projectTeam = teams.find((t) =>
+          t.projects.find((p) => p.id === id)
+        );
 
-    setProject(projectItem || null);
-  }, [id, teams]);
+        if (!projectTeam) {
+          navigate('/');
+          return;
+        }
 
-  const handleMoveCard = (
-    cardId: string,
-    sourceColumnId: string,
-    targetColumnId: string
-  ) => {
-    dispatch(moveCard({ cardId, sourceColumnId, targetColumnId }));
-  };
+        setTeam(projectTeam);
+        const projectItem = projectTeam.projects.find((p) => p.id === id);
 
-  const handleDeleteCard = useCallback(
-    (cardId: string, columnId: string) => {
-      dispatch(deleteCard({ cardId, columnId }));
-    },
-    [dispatch]
-  );
+        if (projectItem) {
+          setProject(projectItem);
+          dispatch(setSelectedProject(projectItem));
+        }
+      } catch (error) {
+        console.error('Error fetching project:', error);
+        navigate('/');
+      } finally {
+        setIsLoading(false);
+      }
+    };
 
-  const handleAddCard = useCallback(
-    (columnId: string, card: ICard) => {
-      dispatch(addCard({ columnId, card }));
-    },
-    [dispatch]
-  );
+    fetchProject();
 
-  const handleUpdateCard = useCallback(
-    (columnId: string, card: ICard) => {
-      dispatch(updateCard({ columnId, card }));
-    },
-    [dispatch]
+    // fetchProject();
+  }, [id]);
+
+  const boardProps = useMemo(
+    () => ({
+      moveCard: handleMoveCard,
+      deleteCard: handleDeleteCard,
+      addCard: handleAddCard,
+      team: team!,
+      updateCard: handleUpdateCard,
+    }),
+    [handleMoveCard, handleDeleteCard, handleAddCard, handleUpdateCard, team]
   );
 
   if (!team) {
     return <div>Team not found</div>;
+  }
+  if (isLoading) {
+    return (
+      <div className='flex items-center justify-center h-screen'>
+        <Loader2 className='w-6 h-6 animate-spin' />
+      </div>
+    );
   }
 
   return (
@@ -83,16 +101,10 @@ const ProjectPage = () => {
         <p className='text-sm text-gray-500'>Team: {team?.name}</p>
       </div>
       <div className='mt-4'>
-        <Board
-          moveCard={handleMoveCard}
-          deleteCard={handleDeleteCard}
-          addCard={handleAddCard}
-          team={team}
-          updateCard={handleUpdateCard}
-        />
+        <Board {...boardProps} />
       </div>
     </div>
   );
 };
 
-export default ProjectPage;
+export default React.memo(ProjectPage);

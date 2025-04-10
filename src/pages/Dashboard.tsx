@@ -1,13 +1,14 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Modal from '../components/Modal';
 import { useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../store/hook';
-import { addTeam } from '../slice/todoSlice';
+import { addTeam, createTeam, fetchTeams } from '../slice/todoSlice';
+
 import { v4 as uuidv4 } from 'uuid';
 import { Member } from '../types/todo';
 import Button from '../components/Button';
 import { useNavigate } from 'react-router-dom';
-
+import { toast } from 'react-hot-toast';
 const Dashboard = () => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const dispatch = useAppDispatch();
@@ -19,10 +20,14 @@ const Dashboard = () => {
   const [members, setMembers] = useState<Member[]>([]);
   const [description, setDescription] = useState<string>('');
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  useEffect(() => {
+    dispatch(fetchTeams());
+  }, []);
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (members.length === 0) {
-      alert('Please add at least one member');
+      toast.error('Please add at least one member');
       return;
     }
     const newMembers = members.map((member) => ({
@@ -32,20 +37,25 @@ const Dashboard = () => {
       role: 'member',
     }));
 
-    dispatch(
-      addTeam({
-        id: uuidv4(),
-        name,
-        description,
-        members: newMembers,
-        projects: [],
-      })
-    );
-    setMembers([]);
-    setMember('');
-    setName('');
-    setDescription('');
-    setIsModalOpen(false);
+    try {
+      await dispatch(
+        createTeam({
+          name,
+          description,
+          members: newMembers,
+          projects: [],
+        })
+      ).unwrap();
+      toast.success('Team created successfully');
+
+      setMembers([]);
+      setMember('');
+      setName('');
+      setDescription('');
+      setIsModalOpen(false);
+    } catch (error) {
+      toast.error('Failed to create team');
+    }
   };
 
   return (

@@ -1,0 +1,279 @@
+openapi: 3.0.0
+info:
+  title: Kanban Board API
+  description: API documentation for the Kanban Board application
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:3001
+    description: Development server
+
+components:
+  schemas:
+    Team:
+      type: object
+      properties:
+        id:
+          type: string
+          example: 'team-123'
+        name:
+          type: string
+          example: 'Engineering Team'
+        members:
+          type: array
+          items:
+            $ref: '#/components/schemas/Member'
+        projects:
+          type: array
+          items:
+            $ref: '#/components/schemas/Project'
+
+    Member:
+      type: object
+      properties:
+        id:
+          type: string
+          example: 'user-123'
+        name:
+          type: string
+          example: 'John Doe'
+        email:
+          type: string
+          format: email
+          example: 'john@example.com'
+
+    Project:
+      type: object
+      properties:
+        id:
+          type: string
+          example: 'proj-123'
+        name:
+          type: string
+          example: 'Website Redesign'
+        description:
+          type: string
+          example: 'Redesign company website'
+        status:
+          type: string
+          enum: [active, completed, archived]
+        teamId:
+          type: string
+        board:
+          $ref: '#/components/schemas/Board'
+
+    Board:
+      type: object
+      properties:
+        id:
+          type: string
+        progress:
+          type: number
+          format: float
+          example: 0.75
+        columns:
+          type: array
+          items:
+            $ref: '#/components/schemas/Column'
+
+    Column:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+          example: 'To Do'
+        cards:
+          type: array
+          items:
+            $ref: '#/components/schemas/Card'
+
+    Card:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        status:
+          type: string
+          enum: [todo, in_progress, done]
+        priority:
+          type: string
+          enum: [low, medium, high]
+        dueDate:
+          type: string
+          format: date-time
+        assignee:
+          $ref: '#/components/schemas/Member'
+        tags:
+          type: array
+          items:
+            type: string
+
+    User:
+      type: object
+      properties:
+        uid:
+          type: string
+        email:
+          type: string
+          format: email
+        displayName:
+          type: string
+        photoURL:
+          type: string
+        lastLoginAt:
+          type: string
+          format: date-time
+
+paths:
+  /teams:
+    get:
+      summary: Get all teams
+      responses:
+        '200':
+          description: List of all teams
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Team'
+
+    post:
+      summary: Create a new team
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Team'
+      responses:
+        '201':
+          description: Team created successfully
+
+  /teams/{teamId}:
+    get:
+      summary: Get team by ID
+      parameters:
+        - name: teamId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Team details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Team'
+
+    patch:
+      summary: Update team
+      parameters:
+        - name: teamId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Team'
+      responses:
+        '200':
+          description: Team updated successfully
+
+    delete:
+      summary: Delete team
+      parameters:
+        - name: teamId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Team deleted successfully
+
+  /users:
+    post:
+      summary: Create a new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        '201':
+          description: User created successfully
+
+  /users/{uid}:
+    get:
+      summary: Get user by UID
+      parameters:
+        - name: uid
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: User details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '404':
+          description: User not found
+
+    put:
+      summary: Update user
+      parameters:
+        - name: uid
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        '200':
+          description: User updated successfully
+
+    delete:
+      summary: Delete user
+      parameters:
+        - name: uid
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: User deleted successfully
+
+  /users/current:
+    get:
+      summary: Get current user
+      responses:
+        '200':
+          description: Current user details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '404':
+          description: No current user found

@@ -1,20 +1,43 @@
 // src/pages/Team.test.tsx
-import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { Provider } from 'react-redux';
-import configureStore from 'redux-mock-store';
+import { configureStore } from '@reduxjs/toolkit';
 import TeamPage from './Team';
 import '@testing-library/jest-dom';
-import { useNavigate } from 'react-router-dom';
+import todoReducer from '../slice/todoSlice';
+import { teamService } from '../services/api';
+import { toast } from 'react-hot-toast';
 
 // Mock the useNavigate hook
-jest.mock('react-router-dom', () => ({
-  ...jest.requireActual('react-router-dom'),
-  useNavigate: jest.fn(),
+const mockNavigate = vi.fn();
+vi.mock('react-router-dom', async () => {
+  const actual = await vi.importActual('react-router-dom');
+  return {
+    ...actual,
+    useNavigate: () => mockNavigate,
+  };
+});
+
+// Mock API services
+vi.mock('../services/api', () => ({
+  teamService: {
+    getTeamById: vi.fn(),
+  },
 }));
 
-const mockStore = configureStore([]);
+// Mock react-hot-toast
+vi.mock('react-hot-toast', () => ({
+  default: {
+    success: vi.fn(),
+    error: vi.fn(),
+  },
+  toast: {
+    success: vi.fn(),
+    error: vi.fn(),
+  },
+}));
 const initialState = {
   todo: {
     teams: [
@@ -23,92 +46,106 @@ const initialState = {
         name: 'Team Name',
         description: 'Team Description',
         members: [{ id: '1', name: 'John Doe', email: 'john@example.com' }],
-        projects: [],
+        projects: [
+          {
+            id: 'p1',
+            name: 'Project 1',
+            description: 'Project Description',
+            status: 'active' as const,
+            teamId: '1',
+            board: {
+              id: 'b1',
+              progress: 0,
+              columns: [],
+            },
+          },
+        ],
       },
     ],
   },
 };
 
-test('renders TeamPage component', () => {
-  const store = mockStore(initialState);
+describe('TeamPage Component', () => {
+  const createTestStore = (preloadedState = initialState) => {
+    return configureStore({
+      reducer: {
+        todo: todoReducer,
+      },
+      preloadedState,
+    });
+  };
 
-  render(
-    <Provider store={store}>
-      <MemoryRouter initialEntries={['/team/1']}>
-        <Routes>
-          <Route path='/team/:id' element={<TeamPage />} />
-        </Routes>
-      </MemoryRouter>
-    </Provider>
-  );
+  const renderTeamPage = async (state = initialState) => {
+    const store = createTestStore(state);
+    render(
+      <Provider store={store}>
+        <MemoryRouter initialEntries={['/team/1']}>
+          <Routes>
+            <Route path='/team/:id' element={<TeamPage />} />
+          </Routes>
+        </MemoryRouter>
+      </Provider>
+    );
+  };
 
-  // Check if the "Back" button is present
-  const backButton = screen.getByText(/Back/i);
-  expect(backButton).toBeInTheDocument();
+  beforeEach(() => {
+    vi.clearAllMocks();
+    vi.mocked(teamService.getTeamById).mockResolvedValue(
+      initialState.todo.teams[0]
+    );
+  });
 
-  // Check if team information is displayed
-  const teamName = screen.getByText(/Team Name/i);
-  expect(teamName).toBeInTheDocument();
-});
+  it('renders team details when team is found', async () => {
+    await renderTeamPage();
 
-test('navigates back when "Back" button is clicked', () => {
-  const store = mockStore(initialState);
-  const navigate = jest.fn();
+    await waitFor(() => {
+      expect(screen.getByText('Team Name')).toBeInTheDocument();
+      expect(screen.getByText('Team Description')).toBeInTheDocument();
+      expect(screen.getByText('John Doe')).toBeInTheDocument();
+      expect(screen.getByText('john@example.com')).toBeInTheDocument();
+    });
+  });
 
-  // Override the mock implementation of useNavigate
-  (useNavigate as jest.Mock).mockImplementation(() => navigate);
+  it('navigates back when back button is clicked', async () => {
+    await renderTeamPage();
 
-  render(
-    <Provider store={store}>
-      <MemoryRouter initialEntries={['/team/1']}>
-        <Routes>
-          <Route path='/team/:id' element={<TeamPage />} />
-        </Routes>
-      </MemoryRouter>
-    </Provider>
-  );
+    await waitFor(() => {
+      expect(screen.getByText(/Back/i)).toBeInTheDocument();
+    });
 
-  const backButton = screen.getByText(/Back/i);
-  fireEvent.click(backButton);
+    fireEvent.click(screen.getByText(/Back/i));
+    expect(mockNavigate).toHaveBeenCalledWith(-1);
+  });
 
-  // Check if navigate was called
-  expect(navigate).toHaveBeenCalledWith(-1);
-});
+  it('handles team not found error', async () => {
+    vi.mocked(teamService.getTeamById).mockRejectedValueOnce(
+      new Error('Team not found')
+    );
 
-test('displays "Team not found" when no team is available', () => {
-  const store = mockStore({ todo: { teams: [] } });
+    await renderTeamPage();
 
-  render(
-    <Provider store={store}>
-      <MemoryRouter initialEntries={['/team/invalid-id']}>
-        <Routes>
-          <Route path='/team/:id' element={<TeamPage />} />
-        </Routes>
-      </MemoryRouter>
-    </Provider>
-  );
+    await waitFor(() => {
+      expect(mockNavigate).toHaveBeenCalledWith('/');
+    });
+  });
 
-  const notFoundMessage = screen.getByText(/Team not found/i);
-  expect(notFoundMessage).toBeInTheDocument();
-});
+  it('displays existing projects and allows navigation to project page', async () => {
+    await renderTeamPage();
 
-test('opens modal to create a new project', () => {
-  const store = mockStore(initialState);
+    await waitFor(() => {
+      expect(screen.getByText('Project 1')).toBeInTheDocument();
+      expect(screen.getByText('Project Description')).toBeInTheDocument();
+    });
 
-  render(
-    <Provider store={store}>
-      <MemoryRouter initialEntries={['/team/1']}>
-        <Routes>
-          <Route path='/team/:id' element={<TeamPage />} />
-        </Routes>
-      </MemoryRouter>
-    </Provider>
-  );
+    fireEvent.click(screen.getByText('Project 1'));
+    expect(mockNavigate).toHaveBeenCalledWith('/project/p1');
+  });
 
-  const createProjectButton = screen.getAllByText(/Create Project/i);
-  fireEvent.click(createProjectButton[0]);
+  it('displays team members count correctly', async () => {
+    await renderTeamPage();
 
-  // Check if the modal is opened
-  const modalTitle = screen.getAllByText(/Create Project/i);
-  expect(modalTitle[1]).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByText('Team Members: 1')).toBeInTheDocument();
+    });
+  });
 });
